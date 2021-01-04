@@ -2,23 +2,18 @@
 require_once 'TApiController.php';
 
 
-class UsersController extends TApiController
-{
-  public function __construct(IRepository $repo)
-  {
+class UsersController extends TApiController {
+  public function __construct(IRepository $repo) {
     parent::__construct($repo);
   }
 
-  protected function getAction()
-  {
-    $method = $this->method;
-    switch ($method) {
+  protected function getAction() {
+    switch ($this->method) {
       case 'GET':
         if (sizeof($this->requestUri) > 2)
           return strpos($this->requestUri[2], "authenticate") !== FALSE ? 'AuthenticateAction' : 'GetOneAction';
         else
           return "GetListAction";
-
       case 'POST':
         return 'PostAction';
       case 'PUT':
@@ -31,8 +26,7 @@ class UsersController extends TApiController
   }
 
   //// GET: api/authenticate?login=...&password=...
-  public function AuthenticateAction()
-  {
+  public function AuthenticateAction() {
     $login = $this->requestParams["login"];
     $password = $this->requestParams["password"];
 
@@ -40,40 +34,26 @@ class UsersController extends TApiController
 
     foreach ($users as $key => $value) {
       if ($value["password"] === $password && $value["login"] === $login)
-        return $this->response($value, 200);
+        return $this->response($value);
     }
 
-    return $this->response("User not found", 404);
+    return $this->response([]);
   }
 
 
   //// GET: api/users
-  public function GetListAction()
-  {
+  public function GetListAction() {
     $users = $this->repo->GetList();
-    if ($users)
-      return $this->response($users, 200);
-
-    return $this->response('Not found', 404);
+    return $this->response($users);
   }
 
   //// GET: api/users/1
-  public function GetOneAction()
-  {
-    //id должен быть первым параметром после /users/x
-    $id = array_shift($this->requestUri);
-
-    if ($id) {
-      $user = $this->repo->Get($id);
-      if ($user)
-        return $this->response($user, 200);
-    }
-    return $this->response('Not found', 404);
+  public function GetOneAction() {
+    return $this->response();
   }
 
   //// POST: api/users
-  public function PostAction()
-  {
+  public function PostAction() {
     //$name = $this->requestParams['name'] ?? '';
     //$email = $this->requestParams['email'] ?? '';
     //if ($name && $email) {
@@ -90,8 +70,7 @@ class UsersController extends TApiController
   }
 
   //// PUT: api/users/1 + параметры запроса name, email
-  public function PutAction()
-  {
+  public function PutAction() {
     //$parse_url = parse_url($this->requestUri[0]);
     //$userId = $parse_url['path'] ?? null;
 
@@ -113,8 +92,7 @@ class UsersController extends TApiController
   }
 
   //// DELETE: api/users/1
-  public function DeleteAction()
-  {
+  public function DeleteAction() {
     //$parse_url = parse_url($this->requestUri[0]);
     //$userId = $parse_url['path'] ?? null;
 

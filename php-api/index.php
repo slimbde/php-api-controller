@@ -1,11 +1,14 @@
 <?php
 
 require_once 'Controllers/UsersController.php';
+require_once 'Controllers/WordsController.php';
 require_once 'Repositories/UserRepository.php';
+require_once 'Repositories/WordRepository.php';
 
 
 $apis = [
   'users',
+  'words'
   //..
 ];
 

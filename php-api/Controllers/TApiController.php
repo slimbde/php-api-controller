@@ -1,19 +1,23 @@
 <?php
 
-abstract class TApiController
-{
+abstract class TApiController {
   protected $repo;
+  protected $method = '';         //GET|POST|PUT|DELETE
+  protected $action = '';         //Название метод для выполнения
+  protected $requestUri = [];
+  protected $requestParams = [];
 
-  protected $method = ''; //GET|POST|PUT|DELETE
+  private $status = array(
+    200 => 'OK',
+    404 => 'Not Found',
+    405 => 'Method Not Allowed',
+    500 => 'Internal Server Error',
+  );
 
-  public $requestUri = [];
-  public $requestParams = [];
-
-  protected $action = ''; //Название метод для выполнения
 
 
-  public function __construct(IRepository $repo)
-  {
+
+  public function __construct(ITrainingRepository $repo) {
     $this->repo = $repo;
 
     header("Access-Control-Allow-Orgin: *");
@@ -36,8 +40,7 @@ abstract class TApiController
     }
   }
 
-  public function handle()
-  {
+  public function handle() {
     //Определение действия для обработки
     $this->action = $this->getAction();
 
@@ -48,28 +51,20 @@ abstract class TApiController
       throw new RuntimeException('Invalid Method', 405);
   }
 
-  protected function response($data, $status = 500)
-  {
-    header("HTTP/1.1 " . $status . " " . $this->requestStatus($status));
+  protected function response($data = "Internal Server Error") {
+    $code = 500;
+
+    if (is_array($data) && count($data) === 0) {
+      $code = 404;
+      $data = "Not found";
+    }
+
+    if (is_array($data) && count($data) > 0)
+      $code = 200;
+
+    header("HTTP/1.1 " . $code . " " . $this->status[$code]);
     return json_encode($data);
   }
 
-  private function requestStatus($code)
-  {
-    $status = array(
-      200 => 'OK',
-      404 => 'Not Found',
-      405 => 'Method Not Allowed',
-      500 => 'Internal Server Error',
-    );
-    return ($status[$code]) ? $status[$code] : $status[500];
-  }
-
   abstract protected function getAction();
-
-  abstract protected function GetListAction();
-  abstract protected function GetOneAction();
-  abstract protected function PutAction();
-  abstract protected function PostAction();
-  abstract protected function DeleteAction();
 }
