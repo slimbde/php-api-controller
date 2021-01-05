@@ -20,4 +20,7 @@ interface ITrainingRepository extends IRepository {
 
   /** retrieves generals belonging to id */
   function GetGeneralsFor(string $id): array;
+
+  /** sets a general notion as solved */
+  function SetGeneralsFor(string $id, string $notionId): void;
 }

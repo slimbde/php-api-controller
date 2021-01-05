@@ -93,6 +93,15 @@ class WordRepository implements ITrainingRepository {
                                 AND w.`#` NOT IN (SELECT solved FROM PROGRESS_GENERALS WHERE id=:id)", $params);
   }
 
+  public function SetGeneralsFor(string $id, string $notionId): void {
+    $params = [
+      ':id' => $id,
+      ':notionId' => $notionId
+    ];
+
+    $this->db->execute("INSERT INTO PROGRESS_GENERALS (`id`,`solved`) VALUES (:id, :notionId)", $params);
+  }
+
   public function Get(string $id): array {
     throw new Exception("WordRepository - Get: not implemented");
   }

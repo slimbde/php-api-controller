@@ -3,8 +3,11 @@ require_once 'TApiController.php';
 
 
 class WordsController extends TApiController {
+  private $repo;
+
   public function __construct(ITrainingRepository $repo) {
-    parent::__construct($repo);
+    parent::__construct();
+    $this->repo = $repo;
   }
 
   protected function getAction() {
@@ -17,6 +20,8 @@ class WordsController extends TApiController {
             return "GetSetForAction";
           else if (strpos($this->requestUri[2], "getgeneralsfor") !== FALSE)
             return "GetGeneralsForAction";
+          else if (strpos($this->requestUri[2], "setgeneralsfor") !== FALSE)
+            return "SetGeneralsForAction";
         } else
           return "GetListAction";
       case 'POST':
@@ -61,6 +66,18 @@ class WordsController extends TApiController {
     try {
       $id = $this->requestParams["id"];
       return $this->response($this->repo->GetGeneralsFor($id));
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// GET: php-api/words/setgeneralsfor?id=...&notionId=...
+  public function SetGeneralsForAction() {
+    try {
+      $id = $this->requestParams["id"];
+      $notionId = $this->requestParams["notionId"];
+      $this->repo->SetGeneralsFor($id, $notionId);
+      return $this->response("OK");
     } catch (Throwable $th) {
       return $this->response($th->getMessage());
     }

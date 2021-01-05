@@ -3,8 +3,11 @@ require_once 'TApiController.php';
 
 
 class UsersController extends TApiController {
+  private $repo;
+
   public function __construct(IRepository $repo) {
-    parent::__construct($repo);
+    parent::__construct();
+    $this->repo = $repo;
   }
 
   protected function getAction() {
