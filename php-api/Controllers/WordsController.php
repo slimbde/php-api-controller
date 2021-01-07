@@ -51,32 +51,32 @@ class WordsController extends TApiController {
     return $this->response($words);
   }
 
-  //// GET: php-api/words/getsetfor?id=...
+  //// GET: php-api/words/getsetfor?login=...
   public function GetSetForAction() {
     try {
-      $id = $this->requestParams["id"];
-      return $this->response($this->repo->GetSetFor($id));
+      $login = $this->requestParams["login"];
+      return $this->response($this->repo->GetSetFor($login));
     } catch (Throwable $th) {
       return $this->response($th->getMessage());
     }
   }
 
-  //// GET: php-api/words/getgeneralsfor?id=...
+  //// GET: php-api/words/getgeneralsfor?login=...
   public function GetGeneralsForAction() {
     try {
-      $id = $this->requestParams["id"];
-      return $this->response($this->repo->GetGeneralsFor($id));
+      $login = $this->requestParams["login"];
+      return $this->response($this->repo->GetGeneralsFor($login));
     } catch (Throwable $th) {
       return $this->response($th->getMessage());
     }
   }
 
-  //// GET: php-api/words/setgeneralsfor?id=...&notionId=...
+  //// GET: php-api/words/setgeneralsfor?login=...&notionId=...
   public function SetGeneralsForAction() {
     try {
-      $id = $this->requestParams["id"];
+      $login = $this->requestParams["login"];
       $notionId = $this->requestParams["notionId"];
-      $this->repo->SetGeneralsFor($id, $notionId);
+      $this->repo->SetGeneralsFor($login, $notionId);
       return $this->response("OK");
     } catch (Throwable $th) {
       return $this->response($th->getMessage());

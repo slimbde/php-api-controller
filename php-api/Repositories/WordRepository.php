@@ -11,31 +11,26 @@ class WordRepository implements ITrainingRepository {
     $this->db = DbHandler::GetInstance();
   }
 
-  public function GetList(): array {
-    return $this->db->execute("SELECT * FROM WORDS");
-  }
-
   public function GetFor(string $particle): array {
     $params = [
       ':particle' => "%$particle%",
       ':particle1' => "%$particle%"
     ];
     return $this->db->execute(" SELECT * 
-                                FROM WORDS 
+                                FROM `words` 
                                 WHERE `Word` LIKE :particle 
                                   OR `Translation` LIKE :particle1", $params);
   }
 
-  public function GetSetFor(string $id): array {
+  public function GetSetFor(string $login): array {
     $params = [
-      ':id' => $id
+      ':login' => $login
     ];
 
-    $user = $this->db->execute("SELECT * FROM USERS where id=:id", $params);
+    $user = $this->db->execute("SELECT * FROM `users` where login=:login", $params);
 
     if (count($user)) {
       $point = new DateTime($user[0]['point']);
-      $login = $user[0]['login'];
 
       $now = new DateTime();
       $nowDate = $now->format('Y-m-d');                       // берем дату в текущий момент времени
@@ -49,7 +44,7 @@ class WordRepository implements ITrainingRepository {
           ':newPoint' => $newPoint,
           ':login' => $login
         ];
-        $this->db->execute("UPDATE `USERS` SET `point`=:newPoint WHERE `login`=:login", $params);
+        $this->db->execute("UPDATE `users` SET `point`=:newPoint WHERE `login`=:login", $params);
       }
 
       // перепишем точку активности в базе
@@ -59,7 +54,7 @@ class WordRepository implements ITrainingRepository {
         ':nowTimestamp' => $nowTimestamp,
         ':login' => $login
       ];
-      $this->db->execute('UPDATE USERS SET `active`=:nowTimestamp WHERE `login`=:login', $params);
+      $this->db->execute('UPDATE `users` SET `active`=:nowTimestamp WHERE `login`=:login', $params);
 
       $params = [
         ":today" => $point->format('d.m.Y'),
@@ -73,7 +68,7 @@ class WordRepository implements ITrainingRepository {
       ];
 
       $req = "SELECT *
-          		FROM WORDS
+          		FROM `words`
               WHERE `Add Date` IN (:today,:today1day,:today3day,:today7day,:today14day,:today30day,:today60day,:today120day)";
 
       return $this->db->execute($req, $params);
@@ -82,27 +77,27 @@ class WordRepository implements ITrainingRepository {
     return [];
   }
 
-  public function GetGeneralsFor(string $id): array {
+  public function GetGeneralsFor(string $login): array {
     $params = [
-      ':id' => $id
+      ':login' => $login
     ];
 
     return $this->db->execute("SELECT w.`#`, w.Issue, w.Answer
-                                FROM WORDS as w
+                                FROM `words` as w
                                 WHERE w.Issue <> ''
-                                AND w.`#` NOT IN (SELECT solved FROM PROGRESS_GENERALS WHERE id=:id)", $params);
+                                AND w.`#` NOT IN (
+                                  SELECT solved FROM `progress_generals` WHERE id=(
+                                    SELECT `id` FROM `users` WHERE login=:login
+                                  )
+                                )", $params);
   }
 
-  public function SetGeneralsFor(string $id, string $notionId): void {
+  public function SetGeneralsFor(string $login, string $notionId): void {
     $params = [
-      ':id' => $id,
+      ':login' => $login,
       ':notionId' => $notionId
     ];
 
-    $this->db->execute("INSERT INTO PROGRESS_GENERALS (`id`,`solved`) VALUES (:id, :notionId)", $params);
-  }
-
-  public function Get(string $id): array {
-    throw new Exception("WordRepository - Get: not implemented");
+    $this->db->execute("INSERT INTO `progress_generals` (`id`,`solved`) VALUES ((SELECT `id` FROM `users` WHERE login=:login), :notionId)", $params);
   }
 }

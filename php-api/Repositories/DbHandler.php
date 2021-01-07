@@ -3,6 +3,7 @@
 
 class DbHandler {
   private $SQLhost = '127.0.0.1';
+  //private $SQLhost = 'fdb19.awardspace.net';
   private $SQLuser = '2650602_db';
   private $SQLpass = '2213qweasdzxc';
   private $SQLdbase = '2650602_db';
@@ -48,7 +49,12 @@ class DbHandler {
   public function execute(string $request, array $params = []): array {
     $stmt = $this->pdo->prepare($request);
     $stmt->execute($params);
+
     $ret = [];
+    if (strpos($request, "INSERT") !== FALSE) {
+      $ret = [$this->pdo->lastInsertId()];
+      return $ret;
+    }
 
     foreach ($stmt as $row)
       array_push($ret, $row);

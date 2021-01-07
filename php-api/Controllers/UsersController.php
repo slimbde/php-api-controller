@@ -5,7 +5,7 @@ require_once 'TApiController.php';
 class UsersController extends TApiController {
   private $repo;
 
-  public function __construct(IRepository $repo) {
+  public function __construct(IUserRepository $repo) {
     parent::__construct();
     $this->repo = $repo;
   }
@@ -13,12 +13,13 @@ class UsersController extends TApiController {
   protected function getAction() {
     switch ($this->method) {
       case 'GET':
-        if (sizeof($this->requestUri) > 2)
-          return strpos($this->requestUri[2], "authenticate") !== FALSE ? 'AuthenticateAction' : 'GetOneAction';
-        else
+        if (sizeof($this->requestUri) > 2) {
+          if (strpos($this->requestUri[2], "authenticate") !== FALSE)
+            return "AuthenticateAction";
+        } else
           return "GetListAction";
       case 'POST':
-        return 'PostAction';
+        return 'RegisterAction';
       case 'PUT':
         return 'PutAction';
       case 'DELETE':
@@ -28,7 +29,7 @@ class UsersController extends TApiController {
     }
   }
 
-  //// GET: api/authenticate?login=...&password=...
+  //// GET: api/users/authenticate?login=...&password=...
   public function AuthenticateAction() {
     $login = $this->requestParams["login"];
     $password = $this->requestParams["password"];
@@ -37,12 +38,24 @@ class UsersController extends TApiController {
 
     foreach ($users as $key => $value) {
       if ($value["password"] === $password && $value["login"] === $login)
-        return $this->response($value);
+        return $this->response("OK");
     }
 
     return $this->response([]);
   }
 
+  //// POST: api/users
+  public function RegisterAction() {
+    try {
+      $login = $_POST["login"];
+      $password = $_POST["password"];
+
+      $result = $this->repo->Register($login, $password);
+      return $this->response("OK");
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
 
   //// GET: api/users
   public function GetListAction() {

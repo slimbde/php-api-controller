@@ -10,6 +10,7 @@ abstract class TApiController {
     200 => 'OK',
     404 => 'Not Found',
     405 => 'Method Not Allowed',
+    409 => 'Conflict',
     500 => 'Internal Server Error',
   );
 
@@ -58,6 +59,9 @@ abstract class TApiController {
 
     if ($data === "OK" || is_array($data) && count($data) > 0)
       $code = 200;
+
+    if ($data === "User-exists")
+      $code = 409;
 
     header("HTTP/1.1 " . $code . " " . $this->status[$code]);
     return json_encode($data);

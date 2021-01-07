@@ -1,17 +1,20 @@
 <?php
 
 
-interface IRepository {
+interface IUserRepository {
   /** retrieves an entity for provided id */
   function Get(string $id): array;
 
   /** retrieves the whole list of entities */
   function GetList(): array;
+
+  /** performs necessary user registration routine */
+  function Register(string $login, string $password): array;
 }
 
 
 
-interface ITrainingRepository extends IRepository {
+interface ITrainingRepository {
   /** retrieves everything matching particle */
   function GetFor(string $particle): array;
 
