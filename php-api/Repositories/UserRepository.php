@@ -36,4 +36,13 @@ class UserRepository implements IUserRepository {
 
     return $this->Get($id[0]);
   }
+
+  public function GetDbInfo(): array {
+    return $this->db->execute("SELECT
+                                (SELECT COUNT(1) FROM `words`) AS Words,
+                                (SELECT COUNT(1) FROM `phrases`) AS Phrases,
+                                (SELECT COUNT(1) FROM `gerunds`) AS Gerunds,
+                                (SELECT COUNT(1) FROM `phrasals`) AS Phrasals,
+                                (SELECT COUNT(1) FROM `idioms`) AS Idioms")[0];
+  }
 }

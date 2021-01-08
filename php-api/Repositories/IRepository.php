@@ -10,6 +10,9 @@ interface IUserRepository {
 
   /** performs necessary user registration routine */
   function Register(string $login, string $password): array;
+
+  /** retrieves db info from db */
+  function GetDbInfo(): array;
 }
 
 

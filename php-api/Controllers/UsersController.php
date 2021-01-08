@@ -16,8 +16,11 @@ class UsersController extends TApiController {
         if (sizeof($this->requestUri) > 2) {
           if (strpos($this->requestUri[2], "authenticate") !== FALSE)
             return "AuthenticateAction";
+          else if (strpos($this->requestUri[2], "getdbinfo") !== FALSE)
+            return "GetDbInfoAction";
         } else
           return "GetListAction";
+        break;
       case 'POST':
         return 'RegisterAction';
       case 'PUT':
@@ -61,6 +64,11 @@ class UsersController extends TApiController {
   public function GetListAction() {
     $users = $this->repo->GetList();
     return $this->response($users);
+  }
+
+  //// GET: api/users/getdbinfo
+  public function GetDbInfoAction() {
+    return $this->response($this->repo->GetDbInfo());
   }
 
   //// GET: api/users/1
