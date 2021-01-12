@@ -22,6 +22,10 @@ class WordsController extends TApiController {
             return "GetGeneralsForAction";
           else if (strpos($this->requestUri[2], "setgeneralsfor") !== FALSE)
             return "SetGeneralsForAction";
+          else if (strpos($this->requestUri[2], "getgerundsfor") !== FALSE)
+            return "GetGerundsForAction";
+          else if (strpos($this->requestUri[2], "setgerundsfor") !== FALSE)
+            return "SetGerundsForAction";
         } else
           return "GetListAction";
       case 'POST':
@@ -47,8 +51,7 @@ class WordsController extends TApiController {
 
   //// GET: php-api/words
   public function GetListAction() {
-    $words = $this->repo->GetList();
-    return $this->response($words);
+    return $this->response([]);
   }
 
   //// GET: php-api/words/getsetfor?login=...
@@ -77,6 +80,28 @@ class WordsController extends TApiController {
       $login = $this->requestParams["login"];
       $notionId = $this->requestParams["notionId"];
       $this->repo->SetGeneralsFor($login, $notionId);
+      return $this->response("OK");
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// GET: php-api/words/getgerundsfor?login=...
+  public function GetGerundsForAction() {
+    try {
+      $login = $this->requestParams["login"];
+      return $this->response($this->repo->GetGerundsFor($login));
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// GET: php-api/words/setgerundsfor?login=...&notionId=...
+  public function SetGerundsForAction() {
+    try {
+      $login = $this->requestParams["login"];
+      $notionId = $this->requestParams["notionId"];
+      $this->repo->SetGerundsFor($login, $notionId);
       return $this->response("OK");
     } catch (Throwable $th) {
       return $this->response($th->getMessage());

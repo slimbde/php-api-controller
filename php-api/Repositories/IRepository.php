@@ -29,4 +29,10 @@ interface ITrainingRepository {
 
   /** sets a general notion as solved */
   function SetGeneralsFor(string $id, string $notionId): void;
+
+  /** retrieves gerunds belonging to id */
+  function GetGerundsFor(string $id): array;
+
+  /** sets a gerund notion as solved */
+  function SetGerundsFor(string $id, string $notionId): void;
 }

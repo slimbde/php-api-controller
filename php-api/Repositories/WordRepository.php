@@ -100,4 +100,28 @@ class WordRepository implements ITrainingRepository {
 
     $this->db->execute("INSERT INTO `progress_generals` (`id`,`solved`) VALUES ((SELECT `id` FROM `users` WHERE login=:login), :notionId)", $params);
   }
+
+  public function GetGerundsFor(string $login): array {
+    $params = [
+      ':login' => $login
+    ];
+
+    return $this->db->execute("SELECT w.`#`, w.Issue, w.Answer
+                                FROM `gerunds` as w
+                                WHERE w.Issue <> ''
+                                AND w.`#` NOT IN (
+                                  SELECT solved FROM `progress_gerunds` WHERE id=(
+                                    SELECT `id` FROM `users` WHERE login=:login
+                                  )
+                                )", $params);
+  }
+
+  public function SetGerundsFor(string $login, string $notionId): void {
+    $params = [
+      ':login' => $login,
+      ':notionId' => $notionId
+    ];
+
+    $this->db->execute("INSERT INTO `progress_gerunds` (`id`,`solved`) VALUES ((SELECT `id` FROM `users` WHERE login=:login), :notionId)", $params);
+  }
 }
