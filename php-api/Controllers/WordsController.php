@@ -26,6 +26,14 @@ class WordsController extends TApiController {
             return "GetGerundsForAction";
           else if (strpos($this->requestUri[2], "setgerundsfor") !== FALSE)
             return "SetGerundsForAction";
+          else if (strpos($this->requestUri[2], "getphrasesfor") !== FALSE)
+            return "GetPhrasesForAction";
+          else if (strpos($this->requestUri[2], "setphrasesfor") !== FALSE)
+            return "SetPhrasesForAction";
+          else if (strpos($this->requestUri[2], "getidiomsfor") !== FALSE)
+            return "GetIdiomsForAction";
+          else if (strpos($this->requestUri[2], "setidiomsfor") !== FALSE)
+            return "SetIdiomsForAction";
         } else
           return "GetListAction";
       case 'POST':
@@ -102,6 +110,50 @@ class WordsController extends TApiController {
       $login = $this->requestParams["login"];
       $notionId = $this->requestParams["notionId"];
       $this->repo->SetGerundsFor($login, $notionId);
+      return $this->response("OK");
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// GET: php-api/words/getphrasesfor?login=...
+  public function GetPhrasesForAction() {
+    try {
+      $login = $this->requestParams["login"];
+      return $this->response($this->repo->GetPhrasesFor($login));
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// GET: php-api/words/setphrasesfor?login=...&notionId=...
+  public function SetPhrasesForAction() {
+    try {
+      $login = $this->requestParams["login"];
+      $notionId = $this->requestParams["notionId"];
+      $this->repo->SetPhrasesFor($login, $notionId);
+      return $this->response("OK");
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// GET: php-api/words/getidiomsfor?login=...
+  public function GetIdiomsForAction() {
+    try {
+      $login = $this->requestParams["login"];
+      return $this->response($this->repo->GetIdiomsFor($login));
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// GET: php-api/words/setidiomsfor?login=...&notionId=...
+  public function SetIdiomsForAction() {
+    try {
+      $login = $this->requestParams["login"];
+      $notionId = $this->requestParams["notionId"];
+      $this->repo->SetIdiomsFor($login, $notionId);
       return $this->response("OK");
     } catch (Throwable $th) {
       return $this->response($th->getMessage());

@@ -124,4 +124,52 @@ class WordRepository implements ITrainingRepository {
 
     $this->db->execute("INSERT INTO `progress_gerunds` (`id`,`solved`) VALUES ((SELECT `id` FROM `users` WHERE login=:login), :notionId)", $params);
   }
+
+  public function GetPhrasesFor(string $login): array {
+    $params = [
+      ':login' => $login
+    ];
+
+    return $this->db->execute("SELECT w.`#`, w.Issue, w.Answer
+                                FROM `phrases` as w
+                                WHERE w.Issue <> ''
+                                AND w.`#` NOT IN (
+                                  SELECT solved FROM `progress_phrases` WHERE id=(
+                                    SELECT `id` FROM `users` WHERE login=:login
+                                  )
+                                )", $params);
+  }
+
+  public function SetPhrasesFor(string $login, string $notionId): void {
+    $params = [
+      ':login' => $login,
+      ':notionId' => $notionId
+    ];
+
+    $this->db->execute("INSERT INTO `progress_phrases` (`id`,`solved`) VALUES ((SELECT `id` FROM `users` WHERE login=:login), :notionId)", $params);
+  }
+
+  public function GetIdiomsFor(string $login): array {
+    $params = [
+      ':login' => $login
+    ];
+
+    return $this->db->execute("SELECT w.`#`, w.Issue, w.Answer
+                                FROM `idioms` as w
+                                WHERE w.Issue <> ''
+                                AND w.`#` NOT IN (
+                                  SELECT solved FROM `progress_idioms` WHERE id=(
+                                    SELECT `id` FROM `users` WHERE login=:login
+                                  )
+                                )", $params);
+  }
+
+  public function SetIdiomsFor(string $login, string $notionId): void {
+    $params = [
+      ':login' => $login,
+      ':notionId' => $notionId
+    ];
+
+    $this->db->execute("INSERT INTO `progress_idioms` (`id`,`solved`) VALUES ((SELECT `id` FROM `users` WHERE login=:login), :notionId)", $params);
+  }
 }

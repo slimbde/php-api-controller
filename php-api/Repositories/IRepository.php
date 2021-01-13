@@ -35,4 +35,16 @@ interface ITrainingRepository {
 
   /** sets a gerund notion as solved */
   function SetGerundsFor(string $id, string $notionId): void;
+
+  /** retrieves phrases belonging to id */
+  function GetPhrasesFor(string $id): array;
+
+  /** sets a phrase notion as solved */
+  function SetPhrasesFor(string $id, string $notionId): void;
+
+  /** retrieves idioms belonging to id */
+  function GetIdiomsFor(string $id): array;
+
+  /** sets an idiom notion as solved */
+  function SetIdiomsFor(string $id, string $notionId): void;
 }
