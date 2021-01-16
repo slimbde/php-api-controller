@@ -34,6 +34,10 @@ class WordsController extends TApiController {
             return "GetIdiomsForAction";
           else if (strpos($this->requestUri[2], "setidiomsfor") !== FALSE)
             return "SetIdiomsForAction";
+          else if (strpos($this->requestUri[2], "getphrasalscategories") !== FALSE)
+            return "GetPhrasalsCategoriesAction";
+          else if (strpos($this->requestUri[2], "getphrasalsfor") !== FALSE)
+            return "GetPhrasalsForAction";
         } else
           return "GetListAction";
       case 'POST':
@@ -155,6 +159,25 @@ class WordsController extends TApiController {
       $notionId = $this->requestParams["notionId"];
       $this->repo->SetIdiomsFor($login, $notionId);
       return $this->response("OK");
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// GET: php-api/words/getphrasalscategories
+  public function GetPhrasalsCategoriesAction() {
+    try {
+      return $this->response($this->repo->GetPhrasalsCategories());
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// GET: php-api/words/getphrasalsfor?category=...
+  public function GetPhrasalsForAction() {
+    try {
+      $category = $this->requestParams["category"];
+      return $this->response($this->repo->GetPhrasalsFor($category));
     } catch (Throwable $th) {
       return $this->response($th->getMessage());
     }

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'DbHandler.php';
+require_once 'IRepository.php';
 
 
 
@@ -171,5 +172,19 @@ class WordRepository implements ITrainingRepository {
     ];
 
     $this->db->execute("INSERT INTO `progress_idioms` (`id`,`solved`) VALUES ((SELECT `id` FROM `users` WHERE login=:login), :notionId)", $params);
+  }
+
+  public function GetPhrasalsCategories(): array {
+    return $this->db->execute("SELECT DISTINCT `range` FROM `phrasals` ORDER BY `range` ASC ");
+  }
+
+  public function GetPhrasalsFor(string $category): array {
+    $params = [
+      ':category' => $category
+    ];
+
+    return $this->db->execute("SELECT `#`, `Translation`, `Phrasal`, `hint`
+                                FROM `phrasals`
+                                WHERE `range` = :category", $params);
   }
 }

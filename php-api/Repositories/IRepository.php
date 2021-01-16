@@ -47,4 +47,10 @@ interface ITrainingRepository {
 
   /** sets an idiom notion as solved */
   function SetIdiomsFor(string $id, string $notionId): void;
+
+  /** gets phrasals categories list */
+  function GetPhrasalsCategories(): array;
+
+  /** gets phrasals for certain category */
+  function GetPhrasalsFor(string $category): array;
 }
