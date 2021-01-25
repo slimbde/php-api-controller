@@ -1,12 +1,16 @@
 <?php
 
+require_once './statuses.php';
+
+
+
 abstract class TApiController {
   protected $method = '';         //GET|POST|PUT|DELETE
   protected $action = '';         //Название метод для выполнения
   protected $requestUri = [];
   protected $requestParams = [];
 
-  private $status = array(
+  static $status = array(
     200 => 'OK',
     404 => 'Not Found',
     405 => 'Method Not Allowed',

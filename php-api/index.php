@@ -13,6 +13,14 @@ $apis = [
 ];
 
 
+$status = array(
+  200 => 'OK',
+  404 => 'Not Found',
+  405 => 'Method Not Allowed',
+  409 => 'Conflict',
+  500 => 'Internal Server Error',
+);
+
 
 try {
   $requestUri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
@@ -30,5 +38,7 @@ try {
 
   echo $api->handle();
 } catch (Exception $e) {
-  echo json_encode(array('error' => $e->getMessage()));
+  header("HTTP/1.1 " . $e->getCode() . " " . $status[$e->getCode()]);
+  //echo json_encode(array('error' => $e->getMessage()));
+  echo json_encode($e->getMessage());
 }
