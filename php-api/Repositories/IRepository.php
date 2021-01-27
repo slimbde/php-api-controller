@@ -11,6 +11,9 @@ interface IUserRepository {
   /** performs necessary user registration routine */
   function Register(string $login, string $password): array;
 
+  /** alters a user credentials */
+  function AlterCredentials(string $prevLogin, string $login, string $password): array;
+
   /** retrieves db info from db */
   function GetDbInfo(): array;
 }

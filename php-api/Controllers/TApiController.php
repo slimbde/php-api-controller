@@ -1,8 +1,5 @@
 <?php
 
-require_once './statuses.php';
-
-
 
 abstract class TApiController {
   protected $method = '';         //GET|POST|PUT|DELETE
@@ -67,9 +64,11 @@ abstract class TApiController {
     if ($data === "User-exists")
       $code = 409;
 
-    header("HTTP/1.1 " . $code . " " . $this->status[$code]);
+    header("HTTP/1.1 " . $code . " " . TApiController::$status[$code]);
     return json_encode($data);
   }
+
+
 
   abstract protected function getAction();
 }

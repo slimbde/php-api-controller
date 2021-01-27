@@ -37,6 +37,19 @@ class UserRepository implements IUserRepository {
     return $this->Get($id[0]);
   }
 
+  public function AlterCredentials(string $prevLogin, string $login, string $password): array {
+    $params = [
+      ":prevLogin" => $prevLogin,
+      ":newLogin" => $login
+    ];
+
+    if (strlen($password) > 0) {
+      $params[":newPassword"] =  $password;
+      return $this->db->execute("UPDATE `users` SET `login`=:newLogin , `password`=:newPassword WHERE `login`=:prevLogin", $params);
+    } else
+      return $this->db->execute("UPDATE `users` SET `login`=:newLogin WHERE `login`=:prevLogin", $params);
+  }
+
   public function GetDbInfo(): array {
     return $this->db->execute("SELECT
                                 (SELECT COUNT(1) FROM `words`) AS Words,

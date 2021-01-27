@@ -18,6 +18,8 @@ class UsersController extends TApiController {
             return "AuthenticateAction";
           else if (strpos($this->requestUri[2], "getdbinfo") !== FALSE)
             return "GetDbInfoAction";
+          else if (strpos($this->requestUri[2], "altercredentials") !== FALSE)
+            return "AlterCredentialsAction";
         } else
           return "GetListAction";
         break;
@@ -60,6 +62,20 @@ class UsersController extends TApiController {
     }
   }
 
+  //// GET: api/users/altercredentials?prevLogin=...&login=...&password=...
+  public function AlterCredentialsAction() {
+    try {
+      $prevLogin = $this->requestParams["prevLogin"];
+      $login = $this->requestParams["login"];
+      $password = $this->requestParams["password"];
+
+      $result = $this->repo->AlterCredentials($prevLogin, $login, $password);
+      return $this->response("OK");
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
   //// GET: api/users
   public function GetListAction() {
     $users = $this->repo->GetList();
@@ -74,23 +90,6 @@ class UsersController extends TApiController {
   //// GET: api/users/1
   public function GetOneAction() {
     return $this->response();
-  }
-
-  //// POST: api/users
-  public function PostAction() {
-    //$name = $this->requestParams['name'] ?? '';
-    //$email = $this->requestParams['email'] ?? '';
-    //if ($name && $email) {
-    //  $db = (new Db())->getConnect();
-    //  $user = new Users($db, [
-    //    'name' => $name,
-    //    'email' => $email
-    //  ]);
-    //  if ($user = $user->saveNew()) {
-    //    return $this->response('Data saved.', 200);
-    //  }
-    //}
-    return $this->response("Saving error", 500);
   }
 
   //// PUT: api/users/1 + параметры запроса name, email
