@@ -85,7 +85,7 @@ class WordRepository implements ITrainingRepository {
 
     return $this->db->execute("SELECT w.`#`, w.Issue, w.Answer
                                 FROM `words` as w
-                                WHERE w.Issue <> ''
+                                WHERE INSTR(w.`Issue`, '__') > 0
                                 AND w.`#` NOT IN (
                                   SELECT solved FROM `progress_generals` WHERE id=(
                                     SELECT `id` FROM `users` WHERE login=:login
@@ -186,5 +186,32 @@ class WordRepository implements ITrainingRepository {
     return $this->db->execute("SELECT `#`, `Translation`, `Phrasal`, `hint`
                                 FROM `phrasals`
                                 WHERE `range` = :category", $params);
+  }
+
+  public function Post($notion): array {
+    $date = $this->db->execute("SELECT `Add Date` FROM `words`
+                                GROUP BY `Add Date` HAVING COUNT(*) < 7
+                                ORDER BY `Add Date`
+                                LIMIT 1");
+
+    $params = [
+      ':notion' => $notion->notion,
+      ':ipa' => $notion->ipa,
+      ':meaning' => $notion->meaning,
+      ':date' => $date[0]["Add Date"],
+      ':example' => $notion->example,
+    ];
+
+    return $this->db->execute("INSERT INTO `words` (`Word`, `IPA`, `Translation`, `Add Date`, `Example`)
+                               VALUES (:notion,:ipa,:meaning,:date,:example)", $params);
+  }
+
+  public function Delete($notionId): array {
+    $params = [':id' => $notionId];
+
+    $result = $this->db->execute(("DELETE FROM `words` WHERE `#`=:id"), $params);
+    array_push($result, $notionId);
+
+    return $result;
   }
 }

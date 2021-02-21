@@ -11,9 +11,6 @@ interface IUserRepository {
   /** performs necessary user registration routine */
   function Register(string $login, string $password): array;
 
-  /** alters a user credentials */
-  function AlterCredentials(string $prevLogin, string $login, string $password): array;
-
   /** retrieves db info from db */
   function GetDbInfo(): array;
 }
@@ -56,4 +53,10 @@ interface ITrainingRepository {
 
   /** gets phrasals for certain category */
   function GetPhrasalsFor(string $category): array;
+
+  /** appends a notion to the database */
+  function Post($notion): array;
+
+  /** deletes a notion from the database */
+  function Delete($notionId): array;
 }

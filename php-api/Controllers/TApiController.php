@@ -1,13 +1,12 @@
 <?php
 
-
 abstract class TApiController {
   protected $method = '';         //GET|POST|PUT|DELETE
   protected $action = '';         //Название метод для выполнения
   protected $requestUri = [];
   protected $requestParams = [];
 
-  static $status = array(
+  private $status = array(
     200 => 'OK',
     404 => 'Not Found',
     405 => 'Method Not Allowed',
@@ -64,11 +63,9 @@ abstract class TApiController {
     if ($data === "User-exists")
       $code = 409;
 
-    header("HTTP/1.1 " . $code . " " . TApiController::$status[$code]);
+    header("HTTP/1.1 " . $code . " " . $this->status[$code]);
     return json_encode($data);
   }
-
-
 
   abstract protected function getAction();
 }

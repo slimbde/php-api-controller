@@ -41,11 +41,11 @@ class WordsController extends TApiController {
         } else
           return "GetListAction";
       case 'POST':
-        return 'PostAction';
+        return 'CreateNotionAction';
       case 'PUT':
         return 'PutAction';
       case 'DELETE':
-        return 'DeleteAction';
+        return 'DeleteNotionAction';
       default:
         return null;
     }
@@ -178,6 +178,26 @@ class WordsController extends TApiController {
     try {
       $category = $this->requestParams["category"];
       return $this->response($this->repo->GetPhrasalsFor($category));
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// POST: php-api/words
+  public function CreateNotionAction() {
+    try {
+      $newNotion = json_decode($_POST["notion"]);
+      return $this->response($this->repo->Post($newNotion));
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// DELETE: php-api/words/...
+  public function DeleteNotionAction() {
+    try {
+      $notionId = $this->requestUri[2];
+      return $this->response($this->repo->Delete($notionId));
     } catch (Throwable $th) {
       return $this->response($th->getMessage());
     }
