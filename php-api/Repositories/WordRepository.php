@@ -200,10 +200,12 @@ class WordRepository implements ITrainingRepository {
       ':meaning' => $notion->meaning,
       ':date' => $date[0]["Add Date"],
       ':example' => $notion->example,
+      ':issue' => $notion->issue,
+      ':solution' => $notion->solution,
     ];
 
-    return $this->db->execute("INSERT INTO `words` (`Word`, `IPA`, `Translation`, `Add Date`, `Example`)
-                               VALUES (:notion,:ipa,:meaning,:date,:example)", $params);
+    return $this->db->execute("INSERT INTO `words` (`Word`, `IPA`, `Translation`, `Add Date`, `Example`, `Issue`, `Answer`)
+                               VALUES (:notion,:ipa,:meaning,:date,:example,:issue,:solution)", $params);
   }
 
   public function Delete($notionId): array {
@@ -221,11 +223,13 @@ class WordRepository implements ITrainingRepository {
       ':ipa' => $notion->ipa,
       ':meaning' => $notion->meaning,
       ':example' => $notion->example,
-      ':id' => $notion->id
+      ':id' => $notion->id,
+      ':issue' => $notion->issue,
+      ':solution' => $notion->solution,
     ];
 
     $result = $this->db->execute("UPDATE `words` 
-                                SET `Word`=:notion, `IPA`=:ipa, `Translation`=:meaning, `Example`=:example
+                                SET `Word`=:notion, `IPA`=:ipa, `Translation`=:meaning, `Example`=:example, `Issue`=:issue, `Answer`=:solution
                                 WHERE `#`=:id", $params);
     array_push($result, $notion->id);
     return $result;

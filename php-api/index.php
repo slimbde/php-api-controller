@@ -15,8 +15,6 @@ $apis = [
 
 
 
-
-
 try {
   $requestUri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 

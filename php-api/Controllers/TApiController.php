@@ -6,7 +6,7 @@ abstract class TApiController {
   protected $requestUri = [];
   protected $requestParams = [];
 
-  private $status = array(
+  public static $status = array(
     200 => 'OK',
     404 => 'Not Found',
     405 => 'Method Not Allowed',
