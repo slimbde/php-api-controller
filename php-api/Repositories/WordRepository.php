@@ -214,4 +214,20 @@ class WordRepository implements ITrainingRepository {
 
     return $result;
   }
+
+  public function Put($notion): array {
+    $params = [
+      ':notion' => $notion->notion,
+      ':ipa' => $notion->ipa,
+      ':meaning' => $notion->meaning,
+      ':example' => $notion->example,
+      ':id' => $notion->id
+    ];
+
+    $result = $this->db->execute("UPDATE `words` 
+                                SET `Word`=:notion, `IPA`=:ipa, `Translation`=:meaning, `Example`=:example
+                                WHERE `#`=:id", $params);
+    array_push($result, $notion->id);
+    return $result;
+  }
 }

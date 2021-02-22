@@ -59,4 +59,7 @@ interface ITrainingRepository {
 
   /** deletes a notion from the database */
   function Delete($notionId): array;
+
+  /** updates a notion of the database */
+  function Put($notion): array;
 }

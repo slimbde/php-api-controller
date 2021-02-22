@@ -43,7 +43,7 @@ class WordsController extends TApiController {
       case 'POST':
         return 'CreateNotionAction';
       case 'PUT':
-        return 'PutAction';
+        return 'UpdateNotionAction';
       case 'DELETE':
         return 'DeleteNotionAction';
       default:
@@ -198,6 +198,23 @@ class WordsController extends TApiController {
     try {
       $notionId = $this->requestUri[2];
       return $this->response($this->repo->Delete($notionId));
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  //// PUT: php-api/words
+  public function UpdateNotionAction() {
+    try {
+      $putfp = fopen("php://input", "r");
+      $putdata = '';
+      while ($data = fread($putfp, 1024))
+        $putdata .= $data;
+      fclose($putfp);
+
+      $newNotion = json_decode($putdata);
+
+      return $this->response($this->repo->Put($newNotion));
     } catch (Throwable $th) {
       return $this->response($th->getMessage());
     }
