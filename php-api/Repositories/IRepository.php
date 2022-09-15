@@ -13,6 +13,11 @@ interface IUserRepository {
 
   /** retrieves db info from db */
   function GetDbInfo(): array;
+
+  function checkFishAuth(string $login, string $hash): int;
+  function registerFish(string $login, string $hash): void;
+  function addFishScores(string $login, int $scores): void;
+  function getFishScores(): array;
 }
 
 

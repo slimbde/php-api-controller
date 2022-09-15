@@ -18,6 +18,14 @@ class UsersController extends TApiController {
             return "AuthenticateAction";
           else if (strpos($this->requestUri[2], "getdbinfo") !== FALSE)
             return "GetDbInfoAction";
+          else if (strpos($this->requestUri[2], "fish-auth") !== FALSE)
+            return "FishAuthAction";
+          else if (strpos($this->requestUri[2], "fish-register") !== FALSE)
+            return "FishRegisterAction";
+          else if (strpos($this->requestUri[2], "fish-add-scores") !== FALSE)
+            return "FishAddScoresAction";
+          else if (strpos($this->requestUri[2], "fish-get-scores") !== FALSE)
+            return "FishGetScoresAction";
         } else
           return "GetListAction";
         break;
@@ -40,7 +48,7 @@ class UsersController extends TApiController {
     $users = $this->repo->GetList();
 
     foreach ($users as $key => $value) {
-      if ($value["password"] === $password && $value["login"] === $login)
+      if ($value["password"] === $password && strtolower($value["login"]) === strtolower($login))
         return $this->response("OK");
     }
 
@@ -74,6 +82,49 @@ class UsersController extends TApiController {
   //// GET: api/users/1
   public function GetOneAction() {
     return $this->response();
+  }
+
+  public function FishAuthAction() {
+    $login = $this->requestParams["login"];
+    $hash = $this->requestParams["hash"];
+
+    $scores = $this->repo->checkFishAuth($login, $hash);
+    return $scores > 0
+      ? $this->response([$scores])
+      : $this->response([0]);        // empty array means 404
+  }
+
+  public function FishRegisterAction() {
+    try {
+      $login = $this->requestParams["login"];
+      $hash = $this->requestParams["hash"];
+
+      $this->repo->registerFish($login, $hash);
+      return $this->response("OK");
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  public function FishAddScoresAction() {
+    try {
+      $login = $this->requestParams["login"];
+      $scores = $this->requestParams["scores"];
+
+      $this->repo->addFishScores($login, $scores);
+      return $this->response("OK");
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
+  }
+
+  public function FishGetScoresAction() {
+    try {
+      $scores = $this->repo->getFishScores();
+      return $this->response($scores);
+    } catch (Throwable $th) {
+      return $this->response($th->getMessage());
+    }
   }
 
   //// POST: api/users

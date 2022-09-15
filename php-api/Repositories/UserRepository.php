@@ -45,4 +45,50 @@ class UserRepository implements IUserRepository {
                                 (SELECT COUNT(1) FROM `phrasals`) AS Phrasals,
                                 (SELECT COUNT(1) FROM `idioms`) AS Idioms")[0];
   }
+
+  public function checkFishAuth(string $login, string $hash): int {
+    $params = [
+      ":login" => $login,
+      ":hash" => $hash,
+    ];
+
+    $scores = $this->db->execute("SELECT Scores FROM `FishAuth` WHERE Login=:login AND PasswordHash=:hash", $params);
+    $scores = intval($scores[0]["Scores"]);
+
+    if ($scores === 0)
+      throw new Exception("No such user", 404);
+
+    return $scores;
+  }
+
+  public function registerFish(string $login, string $hash): void {
+    $params = [
+      ":login" => $login,
+    ];
+
+    $exists = $this->db->execute("SELECT * FROM `FishAuth` WHERE login=:login", $params);
+    if (count($exists) > 0)
+      throw new Exception("User-exists", 409);
+
+    $params = [
+      ":login" => $login,
+      ":hash" => $hash,
+    ];
+
+    $this->db->execute("INSERT INTO `FishAuth`(`Login`,`PasswordHash`) VALUES (:login,:hash)", $params);
+  }
+
+  public function addFishScores(string $login, int $scores): void {
+    $params = [
+      ":login" => $login,
+      ":scores" => $scores,
+    ];
+
+    $this->db->execute("UPDATE `FishAuth` SET Scores=:scores WHERE Login=:login", $params);
+  }
+
+  public function getFishScores(): array {
+    $scores = $this->db->execute("SELECT Login, Scores FROM `FishAuth`");
+    return $scores;
+  }
 }
